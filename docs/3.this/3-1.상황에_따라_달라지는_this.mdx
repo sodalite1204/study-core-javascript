@@ -30,7 +30,7 @@ sidebar_position: 1
   - 변수이면서도 객체의 프로퍼티
 
     ```jsx
-    var name = 'youjin';
+    var name = "youjin";
     console.log(name); // case1: youjin
     console.log(window.name); // case2: youjin
     console.log(this.name); // case3: youjin
@@ -67,7 +67,7 @@ sidebar_position: 1
   - (대부분은) 결과적으로 var로 선언한 것과 똑같이 동작
 
     ```jsx
-    window.name = 'youjin';
+    window.name = "youjin";
     console.log(window.name); // youjin
     ```
 
@@ -141,7 +141,7 @@ sidebar_position: 1
           inner: { innerMethod: ƒ innerMethod() }
          } */
 
-    console.log(obj.inner['innerMethod']());
+    console.log(obj.inner["innerMethod"]());
     /* { innerMethod: ƒ innerMethod() } */
     ```
 
@@ -203,7 +203,7 @@ sidebar_position: 1
 
       var _this = this;
       var innerFunc2 = function () {
-        console.log('1>>>', _this); // { out : f}
+        console.log("1>>>", _this); // { out : f}
       };
 
       innerFunc2();
@@ -220,4 +220,79 @@ sidebar_position: 1
 
 ### 3-1-4 콜백 함수 호출 시 그 함수 내부에서의 this
 
+- 콜백 함수 (함수 A)
+  - 함수 A의 제어권을 다른 함수(메서드) B에게 넘겨주는 경우 함수 A를 콜백 함수라 지칭
+  - 함수 B의 내부 로직에 따라 실행
+  - this => 함수 B의 내부 로직에서 정한 규칙에 따라 값이 결정
+  - 기본적으로는 this가 전역객체를 참조
+  - 제어권을 받은 함수에서 콜백 함수에 별도로 this가 될 대상을 지정한 경우에는 그 대상을 참조
+- ```javascript
+  setTimeout(() => {
+    console.log(this);
+  }, 300);
+  // this => window 객체
+
+  [1, 2, 3, 4, 5].forEach((el) => {
+    console.log(this, el);
+  });
+  // this => window 객체
+  // el => 5
+
+  const loginBtn = document.getElementById("loginBtn");
+  loginBtn.addEventListener("click", (event) => console.log(this, event));
+  // this => window 객체 (왜 엘리먼트가 아닌 wiandow 객체가 찍히는 거지?)
+  // event => event
+  ```
+
+- addEventListener 메서드
+
+  - 콜백 함수를 호출할 때 자신의 this를 상속
+  - . 앞부분이 this
+
+- 콜백 함수의 제어권을 가진 함수가 함수(메서드)가 콜백 함수에서의 this를 무엇으로 할지 결정
+- 특별히 정의하지 않으면 this는 window 객체
+
 ### 3-1-5 생성자 함수 내부에서의 this
+
+- 생성자 함수
+  - 공통 성질을 지니는 객체를 생성하는 데 사용하는 함수
+- 객체지향 언어에서
+  - 생성자 => 클래스 (공통 속성등을 모아 집합을 정의)
+  - 클래스를 통해 만든 객체 => 인스턴스
+- 생성자 함수 호출(new 명령어와 함께 함수를 호출) => 생성자로서 동작
+- 생성자의 prototype 프로퍼티를 참조하는 `__proto__`라는 프로퍼티가 있는 객체(인스턴스)를 생성
+- 미리 준비된 공통 속성 및 개성을 해당 객체(this)에 부여 => 구체적인 인스턴스가 만들어짐
+
+- 생성자 함수 예시
+  -
+  ```javascript
+  const Dog = function (name, age) {
+    this.name = name;
+    this.age = age;
+    this.bark = "멍멍";
+    console.log("this:", this);
+  };
+  const ppopi = new Dog("뽀삐", 2);
+  const hodu = new Dog("호두", 5);
+  console.log(ppopi, hodu);
+  ```
+- this값
+
+  ```javascript
+
+  // 뽀삐 인스턴스
+  'this:' Dog {
+    name: '뽀삐',
+    age: 2,
+    bark: '멍멍',
+    ['__proto__']: { constructor: ƒ Dog() }
+  }
+
+  // 호두 인스턴스
+  'this:' Dog {
+    name: '호두',
+    age: 5,
+    bark: '멍멍',
+    ['__proto__']: { constructor: ƒ Dog() }
+  }
+  ```
